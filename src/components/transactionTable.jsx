@@ -146,8 +146,8 @@ function TransactionTable() {
         onSearchTermChange={handleSearchTermChange}
         onSearch={handleSearch}
       />
-      <table className="table table-striped table-bordered border-black table-sm shadow-lg">
-        <thead className="text-center">
+      <table className="table table-striped table-bordered border-black table-sm shadow-lg text-center">
+        <thead>
           <tr>
             <th scope="col">ID</th>
             <th scope="col">Tanggal</th>
