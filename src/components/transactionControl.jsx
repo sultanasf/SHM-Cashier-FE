@@ -1,5 +1,3 @@
-import React from "react";
-
 function TransactionControl({
   searchBy,
   searchTerm,
@@ -85,7 +83,7 @@ function TransactionControl({
         <div className="col-7 d-flex">
           <div className="ms-auto">
             <a
-              href="#"
+              href="/add"
               className="btn btn-primary"
               style={{ boxShadow: customBoxShadow }}
             >
