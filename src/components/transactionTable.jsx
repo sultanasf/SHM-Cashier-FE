@@ -14,7 +14,9 @@ function TransactionTable() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/shm-cashier");
+      const response = await axios.get(
+        "https://handsome-earrings-duck.cyclic.app/shm-cashier"
+      );
       setData(response.data.result);
       setFilteredData(response.data.result);
       console.info(response.status);
@@ -79,7 +81,7 @@ function TransactionTable() {
   const handleStatusSelesaiChange = async (transaksiId, statusSelesai) => {
     try {
       const response = await axios.patch(
-        "http://localhost:3000/shm-cashier/edit-status",
+        "https://handsome-earrings-duck.cyclic.app/shm-cashier/edit-status",
         {
           transaksiId,
           statusSelesai,
@@ -111,7 +113,7 @@ function TransactionTable() {
   ) => {
     try {
       const response = await axios.patch(
-        "http://localhost:3000/shm-cashier/edit-status",
+        "https://handsome-earrings-duck.cyclic.app/shm-cashier/edit-status",
         {
           transaksiId,
           statusPembayaran,
@@ -146,7 +148,7 @@ function TransactionTable() {
         onSearchTermChange={handleSearchTermChange}
         onSearch={handleSearch}
       />
-      <table className="table table-striped table-bordered border-black table-sm shadow-lg text-center">
+      <table className="table table-striped table-bordered table-sm border-black shadow-lg text-center">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -160,17 +162,18 @@ function TransactionTable() {
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {filteredData.map((item) => (
+          {filteredData.map((item, index) => (
             <tr key={item.transaksi_id}>
-              <td scope="row">{item.transaksi_id}</td>
+              <td scope="row">{index + 1}</td>
               <td>{formatDate(item.detail_transaksi.tanggal)}</td>
               <td>{item.detail_transaksi.mobil.jenis_mobil}</td>
               <td>{item.detail_transaksi.mobil.plat_nomor}</td>
               <td>
                 {item.detail_transaksi.detail_kerusakan.map((detail, index) => (
-                  <li className="list-group-item" key={index}>
-                    {detail.kerusakan} :{" "}
-                    {formatCurrencyLayanan(detail.harga_perbaikan)}
+                  <li key={index} className="list-group-item">
+                    {detail.kerusakan}
+                    {": "}
+                    {detail.harga_perbaikan}
                   </li>
                 ))}
               </td>

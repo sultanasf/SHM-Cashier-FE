@@ -49,7 +49,7 @@ function FormCashier() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/shm-cashier/",
+        "https://handsome-earrings-duck.cyclic.app/shm-cashier/",
         requestBody
       );
       navigate("/");

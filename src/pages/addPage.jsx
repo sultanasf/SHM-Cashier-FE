@@ -3,7 +3,7 @@ import FormCashier from "../components/formCashier";
 function AddPage() {
   return (
     <>
-      <div className="container col-7">
+      <div className="container col-8">
         <FormCashier />
       </div>
     </>
