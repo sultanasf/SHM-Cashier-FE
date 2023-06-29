@@ -7,6 +7,7 @@ function TransactionTable() {
   const [filteredData, setFilteredData] = useState([]);
   const [searchBy, setSearchBy] = useState("jenis_mobil");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -14,12 +15,14 @@ function TransactionTable() {
 
   const fetchData = async () => {
     try {
+      setIsLoading((isLoading) => true);
       const response = await axios.get(
         "https://handsome-earrings-duck.cyclic.app/shm-cashier"
       );
       setData(response.data.result);
       setFilteredData(response.data.result);
       console.info(response.status);
+      setIsLoading((isLoading) => false);
     } catch (error) {
       console.error(error);
     }
@@ -80,6 +83,7 @@ function TransactionTable() {
 
   const handleStatusSelesaiChange = async (transaksiId, statusSelesai) => {
     try {
+      setIsLoading((isLoading) => true);
       const response = await axios.patch(
         "https://handsome-earrings-duck.cyclic.app/shm-cashier/edit-status",
         {
@@ -102,6 +106,7 @@ function TransactionTable() {
       });
       setData(updatedData);
       setFilteredData(updatedData);
+      setIsLoading((isLoading) => false);
     } catch (error) {
       console.error(error);
     }
@@ -112,6 +117,7 @@ function TransactionTable() {
     statusPembayaran
   ) => {
     try {
+      setIsLoading((isLoading) => true);
       const response = await axios.patch(
         "https://handsome-earrings-duck.cyclic.app/shm-cashier/edit-status",
         {
@@ -134,6 +140,7 @@ function TransactionTable() {
       });
       setData(updatedData);
       setFilteredData(updatedData);
+      setIsLoading((isLoading) => false);
     } catch (error) {
       console.error(error);
     }
@@ -148,65 +155,78 @@ function TransactionTable() {
         onSearchTermChange={handleSearchTermChange}
         onSearch={handleSearch}
       />
-      <table className="table table-striped table-bordered table-sm border-black shadow-lg text-center">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Tanggal</th>
-            <th scope="col">Jenis Mobil</th>
-            <th scope="col">Plat Nomor</th>
-            <th scope="col">Layanan</th>
-            <th scope="col">Total Harga</th>
-            <th scope="col">Status Selesai</th>
-            <th scope="col">Pembayaran</th>
-          </tr>
-        </thead>
-        <tbody className="table-group-divider">
-          {filteredData.map((item, index) => (
-            <tr key={item.transaksi_id}>
-              <td scope="row">{index + 1}</td>
-              <td>{formatDate(item.detail_transaksi.tanggal)}</td>
-              <td>{item.detail_transaksi.mobil.jenis_mobil}</td>
-              <td>{item.detail_transaksi.mobil.plat_nomor}</td>
-              <td>
-                {item.detail_transaksi.detail_kerusakan.map((detail, index) => (
-                  <li key={index} className="list-group-item">
-                    {detail.kerusakan}
-                    {": "}
-                    {detail.harga_perbaikan}
-                  </li>
-                ))}
-              </td>
-              <td>{formatCurrencyRupiah(item.detail_transaksi.total_harga)}</td>
-              <td>
-                <select
-                  value={item.detail_transaksi.status_selesai}
-                  onChange={(e) =>
-                    handleStatusSelesaiChange(item.transaksi_id, e.target.value)
-                  }
-                >
-                  <option value="Selesai">Selesai</option>
-                  <option value="Belum">Belum</option>
-                </select>
-              </td>
-              <td>
-                <select
-                  value={item.detail_transaksi.status_pembayaran}
-                  onChange={(e) =>
-                    handleStatusPembayaranChange(
-                      item.transaksi_id,
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="Lunas">Lunas</option>
-                  <option value="Belum">Belum</option>
-                </select>
-              </td>
+      {isLoading ? (
+        <div className="loading-overlay">
+          <img src="loading.gif" className="d-flex mx-auto" alt="Loading" />
+        </div>
+      ) : (
+        <table className="table table-striped table-bordered table-sm border-black shadow-lg text-center">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Tanggal</th>
+              <th scope="col">Jenis Mobil</th>
+              <th scope="col">Plat Nomor</th>
+              <th scope="col">Layanan</th>
+              <th scope="col">Total Harga</th>
+              <th scope="col">Status Selesai</th>
+              <th scope="col">Pembayaran</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="table-group-divider">
+            {filteredData.map((item, index) => (
+              <tr key={item.transaksi_id}>
+                <td scope="row">{index + 1}</td>
+                <td>{formatDate(item.detail_transaksi.tanggal)}</td>
+                <td>{item.detail_transaksi.mobil.jenis_mobil}</td>
+                <td>{item.detail_transaksi.mobil.plat_nomor}</td>
+                <td>
+                  {item.detail_transaksi.detail_kerusakan.map(
+                    (detail, index) => (
+                      <li key={index} className="list-group-item">
+                        {detail.kerusakan}
+                        {": "}
+                        {formatCurrencyLayanan(detail.harga_perbaikan)}
+                      </li>
+                    )
+                  )}
+                </td>
+                <td>
+                  {formatCurrencyRupiah(item.detail_transaksi.total_harga)}
+                </td>
+                <td>
+                  <select
+                    value={item.detail_transaksi.status_selesai}
+                    onChange={(e) =>
+                      handleStatusSelesaiChange(
+                        item.transaksi_id,
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="Selesai">Selesai</option>
+                    <option value="Belum">Belum</option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    value={item.detail_transaksi.status_pembayaran}
+                    onChange={(e) =>
+                      handleStatusPembayaranChange(
+                        item.transaksi_id,
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="Lunas">Lunas</option>
+                    <option value="Belum">Belum</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </>
   );
 }
